@@ -10,12 +10,12 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.rule.ActivityTestRule
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import course.labs.intentslab.ActivityLoaderActivity
 import course.labs.intentslab.R
-import junit.framework.Assert.assertTrue
+import org.junit.Assert.assertTrue
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -32,7 +32,7 @@ class ImplicitIntentTest {
 
     @Rule
     @JvmField
-    var mActivityTestRule = ActivityTestRule(ActivityLoaderActivity::class.java)
+    var mActivityTestRule = ActivityScenarioRule(ActivityLoaderActivity::class.java)
     private var uiDevice: UiDevice? = null
 
     @Before
