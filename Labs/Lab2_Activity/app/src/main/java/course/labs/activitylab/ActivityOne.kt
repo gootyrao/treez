@@ -28,12 +28,13 @@ class ActivityOne : Activity() {
     var onResumeCount: Int = 0;
 
     // TODO: Create variables for each of the TextViews
-    var textViewOnCreate = null // not sure what the default value is supposed to be here
-    var textViewOnRestart = null
-    var textViewOnStart = null
-    var textViewOnResume = null
+    private lateinit var textViewOnCreate: TextView
+    private lateinit var textViewOnRestart: TextView
+    private lateinit var textViewOnStart: TextView
+    private lateinit var textViewOnResume: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(TAG, "onCreate called")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one)
 
@@ -52,9 +53,10 @@ class ActivityOne : Activity() {
             // Hint: use Context's startActivity() method
 
             // Create an intent stating which Activity you would like to start
-            val actTwoIntent = Intent(
-                Intent.ACTION_MAIN,
-                ActivityTwo:class.java) //          *** NOT SURE if this is right ***
+//            val actTwoIntent = Intent(Intent.ACTION_MAIN)
+//            actTwoIntent.setClassName(packageName, "Activity Two")
+            val actTwoIntent = Intent(this, ActivityTwo::class.java)
+            //          *** NOT SURE if this is right ***
             // Launch the Activity using the intent
             startActivity(actTwoIntent)
         }
@@ -161,13 +163,13 @@ class ActivityOne : Activity() {
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {
         // TODO:
         // Save state information with a collection of key-value pairs
-        bundle.putInt("onCreateCounter", onCreateCount)
-        bundle.putInt("onResumeCounter", onResumeCount)
-        bundle.putInt("onRestartCounter", onRestartCount)
-        bundle.putInt("onStartCounter", onStartCount)
+        savedInstanceState.putInt("onCreateCounter", onCreateCount)
+        savedInstanceState.putInt("onResumeCounter", onResumeCount)
+        savedInstanceState.putInt("onRestartCounter", onRestartCount)
+        savedInstanceState.putInt("onStartCounter", onStartCount)
 
         // call superclass to save any view hierarchy
-        super.onSaveInstanceState(bundle)
+        super.onSaveInstanceState(savedInstanceState)
     }
 
     // Updates the displayed counters
