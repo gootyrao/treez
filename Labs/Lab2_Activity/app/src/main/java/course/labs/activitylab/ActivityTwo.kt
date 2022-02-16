@@ -5,6 +5,7 @@ package course.labs.activitylab
 
 import android.app.Activity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
@@ -123,6 +124,7 @@ class ActivityTwo : Activity() {
         Log.i(TAG, "Entered the onStop() method")
         // Follow the previous 2 examples provided
 
+        // Save bundle here? Consult slides
     }
 
     public override fun onRestart() {
