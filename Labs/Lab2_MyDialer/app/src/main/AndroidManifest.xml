@@ -24,7 +24,7 @@
             			    schemed data, also make the Intent category Default -->
             <intent-filter>
                 <action android:name="android.intent.action.DIAL" />
-                <data android:scheme="telephone" /> <!-- might need to edit -->
+                <data android:scheme="tel" /> <!-- might need to edit -->
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

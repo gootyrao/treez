@@ -1,6 +1,7 @@
 package course.labs.intentslab
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -31,13 +32,14 @@ class ExplicitlyLoadedActivity : Activity() {
         Log.i(TAG, "Entered enterClicked()")
 
         // TODO - Save user provided input from the EditText field
-
+        var userTextExplAct = mEditText?.text.toString()
         // TODO - Create a new intent and save the input from the EditText field as an extra
-
+        var userTextRetrievedIntent = Intent(this, ActivityLoaderActivity::class.java)
+        userTextRetrievedIntent.putExtra("responseTextExplAct", userTextExplAct)
         // TODO - Set Activity's result with result code RESULT_OK
-
-        // TODO - Finish the Activity
-
+        setResult(RESULT_OK, userTextRetrievedIntent)
+        // Finish the Activity
+        finish()
     }
 
     companion object {
