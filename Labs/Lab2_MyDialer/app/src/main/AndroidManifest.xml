@@ -22,6 +22,11 @@
             			    Activity will accept Intents with the 
             			    action "android.intent.action.DIAL" and with an "telephone"
             			    schemed data, also make the Intent category Default -->
+            <intent-filter>
+                <action android:name="android.intent.action.DIAL" />
+                <data android:scheme="telephone" /> <!-- might need to edit -->
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 
