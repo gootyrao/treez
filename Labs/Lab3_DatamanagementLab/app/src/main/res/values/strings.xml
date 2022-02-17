@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DataManagement Lab</string>
+    <string name="namestring"> Name</string>
+    <string name="uid"> UID</string>
+</resources>
