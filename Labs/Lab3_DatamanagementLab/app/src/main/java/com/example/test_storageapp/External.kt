@@ -43,12 +43,13 @@ class External : AppCompatActivity() {
         // Assigns the following values from the resources
          inputText = findViewById<EditText>(R.id.myInputText)
          response = findViewById<TextView>(R.id.response)
-         saveButton = findViewById<Button>(R.id.saveExternalStorage)
-         readButton = findViewById<Button>(R.id.getExternalStorage)
+         saveButton = findViewById<Button>(R.id.saveExternalStorage) as Button
+         readButton = findViewById<Button>(R.id.getExternalStorage) as Button
 
 
         saveButton.setOnClickListener {
             //Do the following when save button is clicked
+            Log.i(TAG, "save button clicked")
 
 
             var fos: FileWriter? = null
@@ -61,10 +62,14 @@ class External : AppCompatActivity() {
                     myExternalFile = File(
                         getExternalFilesDir(filepath), filename
                     )
-                    val extFileWriter = FileWriter(myExternalFile)
-//                    fos = openFileOutput(filepath + "/" + filename,
-//                        Context.MODE_PRIVATE)
+                    if (!myExternalFile.exists())
+                        myExternalFile.createNewFile()
 
+                    val extFileWriter = FileWriter(myExternalFile)
+                    extFileWriter.write(myData)
+                    extFileWriter.close()
+//
+                    Log.i(TAG, "save code executed successfully")
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -81,8 +86,13 @@ class External : AppCompatActivity() {
                 }
             }
 
-            //TODO: Set response and reset input text
-            // clear
+            //TODO: Set response and reset input text (clear)
+
+            // 'filename' data has been saved to external storage
+            var responseMsg = filename + "has been saved to external storage..."
+            response.text = responseMsg
+
+            inputText.setText("")
         }
 
 
@@ -101,7 +111,7 @@ class External : AppCompatActivity() {
             }
 
             // TODO: Set input text and response text
-
+            // 'filename' data has been retrieved from external storage
         }
 
 
@@ -112,6 +122,10 @@ class External : AppCompatActivity() {
         }
 
 
+    }
+
+    companion object {
+        private val TAG = "ExternalActivity"
     }
 }
 
