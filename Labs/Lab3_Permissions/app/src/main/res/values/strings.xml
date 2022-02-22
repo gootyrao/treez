@@ -11,5 +11,6 @@
     <string name="title_activity_customization">Customization</string>
     <string name="cust_button1">Start Dangerous Activity</string>
     <string name="cust_message">This button will load a Dangerous Level activity</string>
+    <string name="dangerous_perm">Start activities that perform dangerous actions</string>
 
 </resources>

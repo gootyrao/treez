@@ -25,11 +25,36 @@ class PhoneStatusActivity : Activity() {
         val getPhoneNumButton = findViewById<View>(R.id.get_phone_number_button) as Button
         // TODO - Add onClickListener to the getPhoneNumButton to call loadPhoneNumber()
         // First Check whether for [READ_PHONE_STATE, SEND_SMS, READ_PHONE_NUMBERS] has been provided if not request permission, else call
+        getPhoneNumButton.setOnClickListener {
+            Log.i(TAG, "Get Phone Number Clicked")
+
+            // check for permission
+            var phoneStatePerm = checkSelfPermission("READ_PHONE_STATE") == PackageManager.PERMISSION_GRANTED
+            var sendSMSPerm = checkSelfPermission("SEND_SMS") == PackageManager.PERMISSION_GRANTED
+            var readPhoneNumPerm = checkSelfPermission("READ_PHONE_NUMBERS") == PackageManager.PERMISSION_GRANTED
+            var msgPermissions = phoneStatePerm.toString() + ' ' +
+                    sendSMSPerm.toString() + ' ' +
+                    readPhoneNumPerm.toString()
+            Log.i(TAG, msgPermissions)
+            Log.i(TAG, checkSelfPermission("READ_PHONE_STATE").toString())
+
+            if (phoneStatePerm && sendSMSPerm && readPhoneNumPerm) {
+                // if permission given, call below method, else request permission
+                loadPhoneNumber()
+            } else {
+                requestPermissions(arrayOf("READ_PHONE_STATE", "SEND_SMS", "READ_PHONE_NUMBERS"),
+                    MY_PERMISSIONS_REQUEST_READ_PHONE_STATE)
+            }
+        }
 
 
         val goToDangerousActivityButton = findViewById<View>(R.id.go_to_dangerous_activity_button) as Button
         // TODO - Add onClickListener to the goToDangerousActivityButton to call startGoToDangerousActivity()
+        goToDangerousActivityButton.setOnClickListener {
+            Log.i(TAG, "Go To DangerousActivity Clicked")
 
+            startGoToDangerousActivity()
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -69,8 +94,8 @@ class PhoneStatusActivity : Activity() {
         Log.i(TAG, "Entered startGoToDangerousActivity()")
 
         // TODO - Start the GoToDangerousActivity
-
-
+        val dangActivityIntent = Intent(this, GoToDangerousActivity::class.java)
+        startActivity(dangActivityIntent)
     }
 
     companion object {

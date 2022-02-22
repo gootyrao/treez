@@ -1,5 +1,6 @@
 package com.example.test_storageapp
 
+import android.content.Context
 import android.view.View.OnClickListener
 import androidx.appcompat.app.AppCompatActivity
 
@@ -25,17 +26,13 @@ class External : AppCompatActivity() {
     private val isExternalStorageReadOnly: Boolean
         get() {
             val extStorageState = Environment.getExternalStorageState()
-            return if (Environment.MEDIA_MOUNTED_READ_ONLY == extStorageState) {
-                true
-            } else false
+            return (Environment.MEDIA_MOUNTED_READ_ONLY == extStorageState);
         }
 
     private val isExternalStorageAvailable: Boolean
         get() {
             val extStorageState = Environment.getExternalStorageState()
-            return if (Environment.MEDIA_MOUNTED == extStorageState) {
-                true
-            } else false
+            return (Environment.MEDIA_MOUNTED == extStorageState);
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,11 +40,11 @@ class External : AppCompatActivity() {
         setContentView(R.layout.activity_external)
 
 
-        // TODO: Assign the following values from the resources
-        // inputText =
-        // response =
-        // saveButton =
-        // readButton =
+        // Assigns the following values from the resources
+         inputText = findViewById<EditText>(R.id.myInputText)
+         response = findViewById<TextView>(R.id.response)
+         saveButton = findViewById<Button>(R.id.saveExternalStorage)
+         readButton = findViewById<Button>(R.id.getExternalStorage)
 
 
         saveButton.setOnClickListener {
@@ -58,6 +55,17 @@ class External : AppCompatActivity() {
             try {
                 // TODO: Write the input text to external storage using fos file handler
 
+                myData = inputText.text.toString()
+
+                if (isExternalStorageAvailable && !isExternalStorageReadOnly) {
+                    myExternalFile = File(
+                        getExternalFilesDir(filepath), filename
+                    )
+                    val extFileWriter = FileWriter(myExternalFile)
+//                    fos = openFileOutput(filepath + "/" + filename,
+//                        Context.MODE_PRIVATE)
+
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -67,14 +75,14 @@ class External : AppCompatActivity() {
                         fos.close()
                     } catch (e: IOException) {
                         e.printStackTrace()
-                        Log.e("errr","not close")
+                        Log.e("err","not close")
                     }
 
                 }
             }
 
             //TODO: Set response and reset input text
-
+            // clear
         }
 
 

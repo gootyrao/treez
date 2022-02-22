@@ -17,11 +17,19 @@ class GoToDangerousActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.go_to_dangerous_activity)
 
-        // TODO - Set startDangerousActivityButton value to the button with id R.id.start_dangerous_activity_button
-
+        // Set startDangerousActivityButton value to the button with id R.id.start_dangerous_activity_button
+        val startDangerousActivityButton = findViewById<View>(R.id.start_dangerous_activity_button) as Button
         // TODO - Add onClickListener to the startDangerousActivityButton to call startDangerousActivity()
         // First Check DANGEROUS_ACTIVITY_PERM has been permitted if not request permission, else call
-
+        startDangerousActivityButton.setOnClickListener{
+            if (checkSelfPermission("course.labs.permissions.DANGEROUS_ACTIVITY") ==
+                    PackageManager.PERMISSION_GRANTED) {
+                startDangerousActivity()
+            } else {
+                requestPermissions(arrayOf("course.labs.permissions.DANGEROUS_ACTIVITY"),
+                    MY_PERMISSIONS_REQUEST_DANGEROUS_ACTIVITY)
+            }
+        }
 
     }
 
