@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import java.io.*
+import java.nio.charset.Charset
 
 class External : AppCompatActivity() {
     protected lateinit var inputText: EditText
@@ -68,8 +69,7 @@ class External : AppCompatActivity() {
                     val extFileWriter = FileWriter(myExternalFile)
                     extFileWriter.write(myData)
                     extFileWriter.close()
-//
-                    Log.i(TAG, "save code executed successfully")
+
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -103,7 +103,19 @@ class External : AppCompatActivity() {
             try {
 
                 // TODO: Read from saved location into myData
-
+                    if (isExternalStorageAvailable) {
+                        myExternalFile = File(
+                            getExternalFilesDir(filepath), filename
+                        )
+                        if (myExternalFile.exists()) {
+                            // read file if exists
+//                            val extFileInputStream = FileReader(myExternalFile)
+//                            extFileInputStream. write(myData)
+//                            extFileInputStream.close()
+                            // Note to self, not recommended for files over 2 GB
+                            myData = myExternalFile.readText(Charset.defaultCharset())
+                        }
+                    }
                 }
 
             catch (e: IOException) {
@@ -112,6 +124,10 @@ class External : AppCompatActivity() {
 
             // TODO: Set input text and response text
             // 'filename' data has been retrieved from external storage
+            var responseMsg = filename + "has been retrieved from external storage..."
+            response.text = responseMsg
+
+            inputText.setText(myData)
         }
 
 
