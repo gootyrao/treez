@@ -22,11 +22,11 @@ class GoToDangerousActivity : Activity() {
         // TODO - Add onClickListener to the startDangerousActivityButton to call startDangerousActivity()
         // First Check DANGEROUS_ACTIVITY_PERM has been permitted if not request permission, else call
         startDangerousActivityButton.setOnClickListener{
-            if (checkSelfPermission("course.labs.permissions.DANGEROUS_ACTIVITY") ==
+            if (ContextCompat.checkSelfPermission(applicationContext,"course.labs.permissions.DANGEROUS_ACTIVITY_PERM") ==
                     PackageManager.PERMISSION_GRANTED) {
                 startDangerousActivity()
             } else {
-                requestPermissions(arrayOf("course.labs.permissions.DANGEROUS_ACTIVITY"),
+                requestPermissions(arrayOf("course.labs.permissions.DANGEROUS_ACTIVITY_PERM"),
                     MY_PERMISSIONS_REQUEST_DANGEROUS_ACTIVITY)
             }
         }

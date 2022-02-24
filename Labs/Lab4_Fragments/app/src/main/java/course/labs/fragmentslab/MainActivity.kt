@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.FragmentManager
 
 class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener {
 
@@ -29,10 +30,17 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener {
 
             //TODO 1 - add the FriendsFragment
 
+            val fragManager = supportFragmentManager
+
+            val fragTransaction = fragManager.beginTransaction()
+            fragTransaction.add(R.id.fragment_container, mFriendsFragment)
+
+            fragTransaction.commit()
 
             // Otherwise, save a reference to the FeedFragment for later use
 
-
+        } else {
+            mFeedFragment = FeedFragment()
         }
 
     }
@@ -54,7 +62,20 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener {
 
             //TODO 2 - replace the fragment_container with the FeedFragment
 
+            // start transaction, add feed fragment and remove friends fragment
+            val fragManager = supportFragmentManager
 
+            val fragTransaction = fragManager.beginTransaction()
+
+            fragTransaction.add(R.id.fragment_container, mFeedFragment!!)
+            fragTransaction.remove(mFriendsFragment)
+            Log.i(TAG, "list item clicked and FeedFragment added")
+
+            fragTransaction.addToBackStack(null)
+
+            fragTransaction.commit()
+            // Force transaction to be executed
+            fragManager.executePendingTransactions()
 
         }
 
