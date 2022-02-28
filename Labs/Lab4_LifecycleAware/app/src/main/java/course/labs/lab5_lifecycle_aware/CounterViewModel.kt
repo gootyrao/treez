@@ -16,14 +16,30 @@ class CounterViewModel : ViewModel(), LifecycleObserver {
         private const val TAG = "TickerViewModel"
     }
 
-    private val orientation = MutableLiveData<String>()
-    private val counter = MutableLiveData<Int>()
+    private var orientation = MutableLiveData<String>()
+    private var counter = MutableLiveData<Int>()
 
     // Access methods for the activity, best practice to pass non-mutable data
     internal val iOrientation: LiveData<String>
         get() = orientation
     internal val iCounter: LiveData<Int>
         get() = counter
+
+    fun getOrientation(): MutableLiveData<String> {
+        return orientation
+    }
+
+    fun getCounter(): MutableLiveData<Int> {
+        return counter
+    }
+
+    fun setOrientation(newOrientation : MutableLiveData<String>) {
+        orientation = newOrientation
+    }
+
+    fun setCounter(newCounter : MutableLiveData<Int>) {
+        counter = newCounter
+    }
 
     init {
         orientation.value = "Portrait"

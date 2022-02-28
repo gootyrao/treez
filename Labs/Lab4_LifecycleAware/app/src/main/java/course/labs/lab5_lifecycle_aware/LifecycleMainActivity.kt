@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.TextView
 import android.content.Context
 import android.view.WindowManager
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 
@@ -23,25 +25,55 @@ class LifecycleMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //ToDo: Implement your own logic to display appropriate text ,increase and reset the counter
+        //ToDo: Implement your own logic to display appropriate text, increase and reset the counter
 
         //Todo: Initialize reset button, display text, and 'NEXT' button
         val resetButton: Button = findViewById<Button>(R.id.ResButton) as Button
         val prButton:Button = findViewById<Button>(R.id.PrButton) as Button
         val displayText: TextView = findViewById<TextView>(R.id.DisplayText) as TextView
 
+        // updates only need to happen during event listeners. Updates screen and LiveData
+
         // Todo: Initialize model for counter using CounterViewModel
-         model = ViewModelProvider(this).get(CounterViewModel::class.java)
+        // Below uses a reference to the view model, rather than an instance?
+        model = ViewModelProviders.of(this).get(CounterViewModel::class.java)
+//        model = CounterViewModel()
 
+        // set initial value of counter and orientation
+        var orientTextInit = getScreenOrientation(this) // TODO: See if I need to access from CounterViewModel
+        var counterTextInit = model.iCounter.value.toString()
+        displayText.text = orientTextInit + '-' + counterTextInit
+
+        // CounterViewModel observes orientation and counter
+        val counterObserver = Observer<Int> {
+            displayText.text = (displayText.text as String).substringBeforeLast("-") +
+                    '-' + it.toString()
+        }
+        model.iCounter.observe(this, counterObserver)
+
+        val orientationObserver = Observer<String> {
+            displayText.text = it + '-' +
+                    (displayText.text as String).substringAfterLast("-")
+        }
+        model.iOrientation.observe(this, orientationObserver)
+
+        model.bindToActivityLifecycle(this)
+
+        // only deals with counter
         prButton.setOnClickListener {
-            //Todo: Increment counter and update display text
-
+            // Todo: Increment counter and update display text
+            model.setCounter(MutableLiveData((model.getCounter() as Int) + 1))
         }
 
         resetButton.setOnClickListener {
             //Todo: Reset counter and update display text
+            model.setCounter(MutableLiveData(0))
         }
     }
 
+//    private fun beginObservingCounterOrientation() {
+//
+//
+//    }
 
 }
