@@ -6,6 +6,7 @@ import android.widget.Button
 import android.view.View
 import android.widget.TextView
 import android.content.Context
+import android.util.Log
 import android.view.WindowManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -15,6 +16,9 @@ import androidx.lifecycle.ViewModelProviders
 class LifecycleMainActivity : AppCompatActivity() {
 
     private lateinit var model : CounterViewModel
+    private lateinit var resetButton: Button
+    private lateinit var prButton: Button
+    private lateinit var displayText: TextView
 
     private fun getScreenOrientation(context: Context): String {
         val orientationList = listOf("Portrait","Landscape","Reverse Portrait","Reverse Landscape")
@@ -28,9 +32,9 @@ class LifecycleMainActivity : AppCompatActivity() {
         //ToDo: Implement your own logic to display appropriate text, increase and reset the counter
 
         //Todo: Initialize reset button, display text, and 'NEXT' button
-        val resetButton: Button = findViewById<Button>(R.id.ResButton) as Button
-        val prButton:Button = findViewById<Button>(R.id.PrButton) as Button
-        val displayText: TextView = findViewById<TextView>(R.id.DisplayText) as TextView
+        resetButton = findViewById<Button>(R.id.ResButton)
+        prButton = findViewById<Button>(R.id.PrButton)
+        displayText = findViewById<TextView>(R.id.DisplayText)
 
         // updates only need to happen during event listeners. Updates screen and LiveData
 
@@ -43,6 +47,21 @@ class LifecycleMainActivity : AppCompatActivity() {
         var orientTextInit = getScreenOrientation(this) // TODO: See if I need to access from CounterViewModel
         var counterTextInit = model.iCounter.value.toString()
         displayText.text = orientTextInit + '-' + counterTextInit
+
+
+        // only deals with counter
+        prButton.setOnClickListener {
+            Log.i("LifecycleAware", "Next button clicked")
+            val updatedCounter = (model.getCounter() as Int) + 1;
+            Log.i("LifecycleAware", updatedCounter.toString())
+            // Todo: Increment counter and update display text
+            model.setCounter(MutableLiveData((model.getCounter() as Int) + 1))
+        }
+
+        resetButton.setOnClickListener {
+            //Todo: Reset counter and update display text
+            model.setCounter(MutableLiveData(0))
+        }
 
         // CounterViewModel observes orientation and counter
         val counterObserver = Observer<Int> {
@@ -58,22 +77,6 @@ class LifecycleMainActivity : AppCompatActivity() {
         model.iOrientation.observe(this, orientationObserver)
 
         model.bindToActivityLifecycle(this)
-
-        // only deals with counter
-        prButton.setOnClickListener {
-            // Todo: Increment counter and update display text
-            model.setCounter(MutableLiveData((model.getCounter() as Int) + 1))
-        }
-
-        resetButton.setOnClickListener {
-            //Todo: Reset counter and update display text
-            model.setCounter(MutableLiveData(0))
-        }
     }
-
-//    private fun beginObservingCounterOrientation() {
-//
-//
-//    }
 
 }
