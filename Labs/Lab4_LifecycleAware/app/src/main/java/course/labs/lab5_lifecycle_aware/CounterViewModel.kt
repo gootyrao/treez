@@ -42,7 +42,7 @@ class CounterViewModel : ViewModel(), LifecycleObserver {
     }
 
     init {
-        orientation.value = "Portrait"
+//        orientation.value = "Portrait"
         counter.value = 0
     }
 

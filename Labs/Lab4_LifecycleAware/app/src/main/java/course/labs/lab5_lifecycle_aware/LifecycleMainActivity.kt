@@ -6,6 +6,7 @@ import android.widget.Button
 import android.view.View
 import android.widget.TextView
 import android.content.Context
+import android.content.res.Configuration
 import android.util.Log
 import android.view.WindowManager
 import androidx.lifecycle.MutableLiveData
@@ -14,6 +15,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 
 class LifecycleMainActivity : AppCompatActivity() {
+
+    companion object {
+        private val TAG = "LifecycleAware"
+    }
 
     private lateinit var model : CounterViewModel
     private lateinit var resetButton: Button
@@ -37,6 +42,8 @@ class LifecycleMainActivity : AppCompatActivity() {
         displayText = findViewById<TextView>(R.id.DisplayText)
 
         // updates only need to happen during event listeners. Updates screen and LiveData
+        // enable autorotate on the settings of your avd
+        // on reconfiguration change, update liveData?
 
         // Todo: Initialize model for counter using CounterViewModel
         // Below uses a reference to the view model, rather than an instance?
@@ -44,16 +51,17 @@ class LifecycleMainActivity : AppCompatActivity() {
 //        model = CounterViewModel()
 
         // set initial value of counter and orientation
-        var orientTextInit = getScreenOrientation(this) // TODO: See if I need to access from CounterViewModel
+//        var orientTextInit = getScreenOrientation(this) // TODO: See if I need to access from CounterViewModel
+        model.setOrientation(MutableLiveData<String>(getScreenOrientation(this)))
         var counterTextInit = model.iCounter.value.toString()
-        displayText.text = orientTextInit + '-' + counterTextInit
+        displayText.text = model.getOrientation().toString() + '-' + counterTextInit
 
 
         // only deals with counter
         prButton.setOnClickListener {
-            Log.i("LifecycleAware", "Next button clicked")
+            Log.i(TAG, "Next button clicked")
             val updatedCounter = (model.getCounter() as Int) + 1;
-            Log.i("LifecycleAware", updatedCounter.toString())
+            Log.i(TAG, updatedCounter.toString())
             // Todo: Increment counter and update display text
             model.setCounter(MutableLiveData((model.getCounter() as Int) + 1))
         }
@@ -77,6 +85,19 @@ class LifecycleMainActivity : AppCompatActivity() {
         model.iOrientation.observe(this, orientationObserver)
 
         model.bindToActivityLifecycle(this)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Checks the orientation of the screen
+//        if (newConfig.orientation.toString() != model.getOrientation().toString()) {
+//            Log.i(TAG, newConfig.orientation.toString())
+//            Log.i(TAG, model.getOrientation().toString())
+//        }
+        Log.i(TAG, "test")
+        // Update LiveData variable
+        model.setOrientation(MutableLiveData<String>(getScreenOrientation(this)))
     }
 
 }
