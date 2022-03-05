@@ -53,11 +53,15 @@ class ToDoListAdapter(private val mContext: Context) :
             val v = LayoutInflater.from(parent.context).inflate(R.layout.header_view, parent, false)
             return ViewHolder(v)
         } else {
+            // is a TODO_VIEW_TYPE
             val v = LayoutInflater.from(parent.context).inflate(R.layout.todo_item, parent, false)
             val viewHolder = ViewHolder(v)
 
             // TODO - Inflate the View (defined in todo_item.xml) for this ToDoItem and store references in ViewHolder
 
+//            var mItemLayout: View = itemView
+
+            val todoView =
 
             return viewHolder
         }
@@ -84,17 +88,24 @@ class ToDoListAdapter(private val mContext: Context) :
 
             Log.i(TAG, "onBindViewHolder   " + viewHolder.mTitleView.toString())
 
+            // example of data being accessed from the ViewHolder,
+            // an internal class of ToDoListAdapter
             viewHolder.mTitleView!!.text = toDoItem.title
 
             // Todo - Initialize statusView's isChecked property
+            viewHolder.mStatusView!!.isChecked = toDoItem.status == Status.DONE
 
-            // TODO - Set up OnCheckedChangeListener CheckBox
+            // TODO - Set up OnCheckedChangeListener CheckBox, for saying done or not done
+            viewHolder.mStatusView!!.setOnCheckedChangeListener { mStatusView, isCheckedInput ->
 
+                viewHolder.mStatusView!!.isChecked = isCheckedInput
+            }
+            
             // TODO - Display Priority in a TextView
-
+            viewHolder.mPriorityView!!.text = toDoItem.priority.toString()
 
             // TODO - Display Time and Date
-
+            viewHolder.mDateView!!.text = toDoItem.date.toString()
         }
     }
 

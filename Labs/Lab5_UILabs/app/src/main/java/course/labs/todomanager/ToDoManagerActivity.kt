@@ -25,31 +25,41 @@ import course.labs.todomanager.ToDoItem.Status
 class ToDoManagerActivity : Activity() {
 
     private lateinit var mAdapter: ToDoListAdapter
+    private lateinit var mRecyclerView: RecyclerView
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.recycle_view)
         Log.i(TAG, "Entered onCreate()")
 
+        mRecyclerView = findViewById(R.id.list)
+        mRecyclerView.layoutManager = LinearLayoutManager(this)
+
         // Todo - Create a new TodoListAdapter for this Activity's RecyclerView
+        mAdapter = ToDoListAdapter(this)
 
         // Load saved ToDoItems
         loadItemsFromFile()
 
         // TODO - Attach the adapter to this Activity's RecyclerView
-
+        mRecyclerView.adapter = mAdapter
 
 
     }
 
+    // Waiting the result from the AddToDoActivity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         Log.i(TAG, "Entered onActivityResult()")
 
         // TODO - Check result code and request code
         // if user submitted a new ToDoItem
+        // TODO: ToDoItemCreated Here
         // Create a new ToDoItem from the data Intent
         // and then add it to the adapter
+
+        // defaults: title: "", Status: Not Done, Priority: Med, 7 days from current date
+        // TODO: are we checking empty values first or just filling them with defaults?
 
     }
 

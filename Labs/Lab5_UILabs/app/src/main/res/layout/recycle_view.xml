@@ -4,4 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Last row displays a special view w/ "Add New ToDoItem"
+     First position is the header, when clicked opens up AddToDoActivity -->
+
 </androidx.recyclerview.widget.RecyclerView>
