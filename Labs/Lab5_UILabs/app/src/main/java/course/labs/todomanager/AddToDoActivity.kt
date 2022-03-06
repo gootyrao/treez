@@ -99,7 +99,10 @@ class AddToDoActivity : FragmentActivity() {
         cancelButton.setOnClickListener {
             Log.i(TAG, "Entered cancelButton.OnClickListener.onClick()")
 
-            // TODO - Indicate result and finish
+            // Indicate result and finish
+            // result is some enum that you check in the resultcode of onActivityResult
+            setResult(ToDoManagerActivity.RESULT_TODO_CANCELED)
+            finish()
         }
 
         // TODO - Set up OnClickListener for the Reset Button
@@ -108,7 +111,11 @@ class AddToDoActivity : FragmentActivity() {
             Log.i(TAG, "Entered resetButton.OnClickListener.onClick()")
 
             // TODO - Reset data to default values
-
+            // defaults: title: "", Status: Not Done, Priority: Med, 7 days from current date
+            mTitleText.setText("")
+            mPriorityRadioGroup.check(R.id.medPriority)
+            mStatusRadioGroup.check(R.id.statusNotDone)
+            setDefaultDateTime()
         }
 
         // Set up OnClickListener for the Submit Button
@@ -119,19 +126,43 @@ class AddToDoActivity : FragmentActivity() {
 
             // TODO - gather ToDoItem data
 
-            // Get Priority
+            // Get Priority, return a Priority
+            var priorityId = mPriorityRadioGroup.checkedRadioButtonId
+            var priorityButtonClicked = findViewById<RadioButton>(priorityId)
+            var formPriority = Priority.MED
+            if (priorityButtonClicked.text.toString() == "Low") {
+                formPriority = Priority.LOW
+            } else {
+                if (priorityButtonClicked.text.toString() == "High") {
+                    formPriority = Priority.HIGH
+                }
+            }
+            Log.i(TAG, formPriority.toString())
 
-            // Get Status
+            // Get Status, return a Status
+            var statusId = mStatusRadioGroup.checkedRadioButtonId
+            var statusButtonClicked = findViewById<RadioButton>(statusId)
+            var formStatus = Status.NOTDONE
+            if (statusButtonClicked.text.toString() == "Done:") {
+                formStatus = Status.DONE
+            }
+//            Log.i(TAG, "Button text: " + statusButtonClicked.text.toString())
+//            Log.i(TAG, "Status retrieved: " + formStatus.toString())
 
             // Title
-
+            var formTitle = mTitleText.text.toString()
             // Date
+            var formDateTimeStr = dateView.text.toString() + ' ' + timeView.text.toString()
+            Log.i(TAG, formDateTimeStr)
 
             // Package ToDoItem data into an Intent
-//            ToDoItem.packageIntent()
+          val toDoItemIntent = Intent()
+          ToDoItem.packageIntent(toDoItemIntent,
+              formTitle, formPriority, formStatus, formDateTimeStr)
 
             // TODO - return data Intent and finish
-
+            setResult(ToDoManagerActivity.RESULT_ITEM_CREATED, toDoItemIntent)
+            finish()
         }
     }
 

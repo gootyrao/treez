@@ -57,11 +57,14 @@ class ToDoListAdapter(private val mContext: Context) :
             val v = LayoutInflater.from(parent.context).inflate(R.layout.todo_item, parent, false)
             val viewHolder = ViewHolder(v)
 
-            // TODO - Inflate the View (defined in todo_item.xml) for this ToDoItem and store references in ViewHolder
+            // Inflate the View (defined in todo_item.xml) for this ToDoItem and store references in ViewHolder
 
 //            var mItemLayout: View = itemView
-
-            val todoView =
+            // TODO: Note to self, I don't have a line that inflates mItemLayout itself. Not sure if I need it
+            viewHolder.mTitleView = viewHolder.mItemLayout.findViewById<TextView>(R.id.titleView)
+            viewHolder.mStatusView = viewHolder.mItemLayout.findViewById<CheckBox>(R.id.statusCheckBox)
+            viewHolder.mPriorityView = viewHolder.mItemLayout.findViewById<TextView>(R.id.priorityView)
+            viewHolder.mDateView = viewHolder.mItemLayout.findViewById<TextView>(R.id.dateView)
 
             return viewHolder
         }
@@ -69,8 +72,8 @@ class ToDoListAdapter(private val mContext: Context) :
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
 
-        if (position == 0) {
-            viewHolder.itemView.setOnClickListener {
+        if (position == 0) { // If this view is the header
+            viewHolder.itemView.setOnClickListener { // If the header is clicked
                 Log.i(ToDoManagerActivity.TAG, "Entered footerView.OnClickListener.onClick()")
                 val options: Bundle? = null
                 startActivityForResult(
@@ -83,7 +86,7 @@ class ToDoListAdapter(private val mContext: Context) :
                     options
                 )
             }
-        } else {
+        } else { // If this is a ToDoItem, anything other than the header
             val toDoItem = mItems[position - 1]
 
             Log.i(TAG, "onBindViewHolder   " + viewHolder.mTitleView.toString())
@@ -92,19 +95,19 @@ class ToDoListAdapter(private val mContext: Context) :
             // an internal class of ToDoListAdapter
             viewHolder.mTitleView!!.text = toDoItem.title
 
-            // Todo - Initialize statusView's isChecked property
+            // Initialize statusView's isChecked property
             viewHolder.mStatusView!!.isChecked = toDoItem.status == Status.DONE
 
-            // TODO - Set up OnCheckedChangeListener CheckBox, for saying done or not done
+            // Set up OnCheckedChangeListener CheckBox, for saying done or not done
             viewHolder.mStatusView!!.setOnCheckedChangeListener { mStatusView, isCheckedInput ->
 
                 viewHolder.mStatusView!!.isChecked = isCheckedInput
             }
             
-            // TODO - Display Priority in a TextView
+            // Display Priority in a TextView
             viewHolder.mPriorityView!!.text = toDoItem.priority.toString()
 
-            // TODO - Display Time and Date
+            // Display Time and Date
             viewHolder.mDateView!!.text = toDoItem.date.toString()
         }
     }

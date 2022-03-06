@@ -35,13 +35,13 @@ class ToDoManagerActivity : Activity() {
         mRecyclerView = findViewById(R.id.list)
         mRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Todo - Create a new TodoListAdapter for this Activity's RecyclerView
+        // Create a new TodoListAdapter for this Activity's RecyclerView
         mAdapter = ToDoListAdapter(this)
 
         // Load saved ToDoItems
         loadItemsFromFile()
 
-        // TODO - Attach the adapter to this Activity's RecyclerView
+        // Attach the adapter to this Activity's RecyclerView
         mRecyclerView.adapter = mAdapter
 
 
@@ -54,12 +54,17 @@ class ToDoManagerActivity : Activity() {
 
         // TODO - Check result code and request code
         // if user submitted a new ToDoItem
-        // TODO: ToDoItemCreated Here
-        // Create a new ToDoItem from the data Intent
-        // and then add it to the adapter
+        if (requestCode == ADD_TODO_ITEM_REQUEST &&
+                resultCode == RESULT_ITEM_CREATED) {
 
-        // defaults: title: "", Status: Not Done, Priority: Med, 7 days from current date
-        // TODO: are we checking empty values first or just filling them with defaults?
+            // TODO: ToDoItemCreated Here
+            // Create a new ToDoItem from the data Intent
+            var newToDoItem = ToDoItem(data!!)
+
+            // and then add it to the adapter
+            mAdapter.add(newToDoItem)
+
+        }
 
     }
 
@@ -170,6 +175,8 @@ class ToDoManagerActivity : Activity() {
 
     companion object {
 
+        val RESULT_ITEM_CREATED: Int = 1
+        const val RESULT_TODO_CANCELED: Int = 2
         const val ADD_TODO_ITEM_REQUEST = 0
         private const val FILE_NAME = "TodoManagerActivityData.txt"
         const val TAG = "Lab-UserInterface"
