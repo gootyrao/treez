@@ -1,31 +1,46 @@
 package course.labs.notificationslab
 
 import android.app.*
+import android.app.Activity.RESULT_CANCELED
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.icu.number.IntegerWidth
+import android.os.Build
 import androidx.fragment.app.Fragment
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RemoteViews
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import java.io.*
+import kotlin.reflect.typeOf
 
 class DownloaderTaskFragment : Fragment() {
     private var mDownloaderTask: DownloaderTask? = null
     private var mCallback: DownloadFinishedListener? = null
+//    private val notificationManager: NotificationManager =
+//        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private lateinit var mContext: Context
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         super.onCreate(savedInstanceState)
 
-        // TODO: Create new DownloaderTask that "downloads" data
+        // TODO: (Done, needs test) Create new DownloaderTask that "downloads" data
+        mDownloaderTask = DownloaderTask()
 
-        // TODO: Retrieve arguments from DownloaderTaskFragment
+        // TODO: (Done, needs test) Retrieve arguments from DownloaderTaskFragment
         // Prepare them for use with DownloaderTask.
+        var argsDownloaderTaskFragment = this.requireArguments().get("friends") // Bundle
+//        Log.i("NotificationsLab", argsDownloaderTaskFragment.toString())
+        var feedsIntArr = arrayOf(argsDownloaderTaskFragment)
+        var feeds = feedsIntArr as Array<Int?>
 
         mDownloaderTask!!.execute(*feeds)
 
@@ -126,13 +141,19 @@ class DownloaderTaskFragment : Fragment() {
 
                         override fun onReceive(context: Context, intent: Intent) {
 
-                            // TODO: Check whether or not the MainActivity
+                            // TODO: (Done, needs testing) Check whether or not the MainActivity
                             // received the broadcast
-                            if (true) {
+                            if (resultCode == RESULT_CANCELED) {
 
-                                // TODO: If not, create a PendingIntent using the
+                                createNotificationChannel()
+
+                                // TODO: (Done, needs testing) If not, create a PendingIntent using the
                                 // restartMainActivityIntent and set its flags
                                 // to FLAG_UPDATE_CURRENT
+                                val mContentIntent = PendingIntent.getActivity(context,
+                                    0,
+                                    restartMainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
+                                )
 
                                 // Uses R.layout.custom_notification for the
                                 // layout of the notification View. The xml
@@ -141,9 +162,10 @@ class DownloaderTaskFragment : Fragment() {
                                         mContext.packageName,
                                         R.layout.custom_notification)
 
-                                // TODO: Set the notification View's text to
+                                // TODO: (Done, needs testing) Set the notification View's text to
                                 // reflect whether the download completed
                                 // successfully
+                                val notifViewText = if (success) successMsg else failMsg
 
                                 // TODO: Use the Notification.Builder class to
                                 // create the Notification. You will have to set
@@ -151,8 +173,23 @@ class DownloaderTaskFragment : Fragment() {
                                 // android.R.drawable.stat_sys_warning
                                 // for the small icon. You should also
                                 // setAutoCancel(true).
+                                val notificationBuilder = Notification.Builder(
+                                    context, channelID
+                                )
+                                    .setCustomContentView(mContentView)
+                                    .setSmallIcon(android.R.drawable.stat_sys_warning)
+                                    .setAutoCancel(true)
+//                                    .setContentTitle() // Don't think I need this, keeping it here
+                                    .setContentText(notifViewText)
+                                    .setContentIntent(mContentIntent)
 
                                 // TODO: Send the notification
+                                // get reference to the notification manager, call notify on it
+                                val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                                notificationManager.notify(
+                                    MY_NOTIFICATION_ID,
+                                    notificationBuilder.build()
+                                )
                             } else {
                                 Toast.makeText(mContext,
                                         if (success) successMsg else failMsg,
@@ -168,6 +205,14 @@ class DownloaderTaskFragment : Fragment() {
                 // TODO: Create Notification Channel with id channelID,
                 // name R.string.channel_name
                 // and description R.string.channel_description of high importance
+                val channelName = getString(R.string.channel_name)
+                var notifChannel = NotificationChannel(channelID,
+                    channelName, NotificationManager.IMPORTANCE_HIGH).apply {
+                        description = getString(R.string.channel_description)
+                }
+
+                val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(notifChannel)
             }
         }
 

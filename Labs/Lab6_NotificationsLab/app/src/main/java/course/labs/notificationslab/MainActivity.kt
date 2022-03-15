@@ -27,6 +27,7 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener,
     private var mFormattedFeeds: Array<String?>? = arrayOfNulls<String?>(sRawTextFeedIds.size)
     private var mIsFresh = false
     private var mRefreshReceiver: BroadcastReceiver? = null
+    var mResultCode = RESULT_CANCELED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Starting MainActivity")
@@ -50,22 +51,27 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener,
         // The feed is fresh if it was downloaded less than 2 minutes ago
         mIsFresh = System.currentTimeMillis() - getFileStreamPath(
                 TWEET_FILENAME).lastModified() < TWO_MIN
-        if (!mIsFresh) {
+        if (!mIsFresh) { // If feed needs updating
             installDownloaderTaskFragment()
 
-            // TODO: Show a Toast message displaying
-            // R.string.download_in_progress string
+            // TODO: (complete, not tested) Show a Toast message displaying download in progress
+            Toast.makeText(applicationContext,
+                getString(R.string.download_in_progress_string), Toast.LENGTH_LONG).show()
 
             // Set up a BroadcastReceiver to receive an Intent when download
             // finishes.
             mRefreshReceiver = object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
-                    // TODO: Check to make sure this is an ordered broadcast
+                    // TODO: (Done, need testing) Check to make sure this is an ordered broadcast
                     // Let sender know that the Intent was received
                     // by setting result code to MainActivity.IS_ALIVE
+                    if (isOrderedBroadcast) {
+                        mResultCode = IS_ALIVE
+                        setResult(mResultCode)
+                    }
                 }
             }
-        } else {
+        } else { // If feed does not need updating
             // Process Twitter data taken from stored file
             parseJSON(loadTweetsFromFile())
 
@@ -107,15 +113,18 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener,
     override fun onResume() {
         super.onResume()
 
-        // TODO: Register the BroadcastReceiver to receive a
-        // DATA_REFRESHED_ACTION broadcast
+        // TODO: (Done, need testing) Register the BroadcastReceiver to receive a DATA_REFRESHED_ACTION broadcast
+        registerReceiver(mRefreshReceiver, IntentFilter(DATA_REFRESHED_ACTION))
     }
 
     override fun onPause() {
 
-        // TODO: Unregister the BroadcastReceiver if it has been registered
+        // TODO: (Done, need testing) Unregister the BroadcastReceiver if it has been registered
         // Note: check that mRefreshReceiver is not null before attempting to
         // unregister in order to work around an Instrumentation issue
+        if (mRefreshReceiver != null) {
+            unregisterReceiver(mRefreshReceiver)
+        }
 
         super.onPause()
     }
