@@ -46,6 +46,8 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener,
 
   // One time setup of UI and retained (headless) Fragment
     private fun setupFragments() {
+        Log.i(TAG, "Exiting setupFragments")
+
         installFriendsFragment()
 
         // The feed is fresh if it was downloaded less than 2 minutes ago
@@ -78,6 +80,8 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener,
             // Enable user interaction
             mIsInteractionEnabled = true
         }
+
+        Log.i(TAG, "Exiting setupFragments")
     }
 
     // Add Friends Fragment to Activity

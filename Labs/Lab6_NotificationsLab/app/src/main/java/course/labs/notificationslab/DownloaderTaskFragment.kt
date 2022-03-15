@@ -185,7 +185,7 @@ class DownloaderTaskFragment : Fragment() {
 
                                 // TODO: Send the notification
                                 // get reference to the notification manager, call notify on it
-                                val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                                val notificationManager = mContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                                 notificationManager.notify(
                                     MY_NOTIFICATION_ID,
                                     notificationBuilder.build()
@@ -201,19 +201,17 @@ class DownloaderTaskFragment : Fragment() {
 
         private val channelID = "my_channel_01"
         private fun createNotificationChannel() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // TODO: Create Notification Channel with id channelID,
-                // name R.string.channel_name
-                // and description R.string.channel_description of high importance
-                val channelName = getString(R.string.channel_name)
-                var notifChannel = NotificationChannel(channelID,
-                    channelName, NotificationManager.IMPORTANCE_HIGH).apply {
-                        description = getString(R.string.channel_description)
-                }
-
-                val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.createNotificationChannel(notifChannel)
+            // TODO: Create Notification Channel with id channelID,
+            // name R.string.channel_name
+            // and description R.string.channel_description of high importance
+            val channelName = getString(R.string.channel_name)
+            var notifChannel = NotificationChannel(channelID,
+                channelName, NotificationManager.IMPORTANCE_HIGH).apply {
+                    description = getString(R.string.channel_description)
             }
+
+            val notificationManager = mContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(notifChannel)
         }
 
         // Saves the tweets to a file
