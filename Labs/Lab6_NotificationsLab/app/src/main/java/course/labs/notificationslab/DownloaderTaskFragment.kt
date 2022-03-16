@@ -37,10 +37,13 @@ class DownloaderTaskFragment : Fragment() {
 
         // TODO: (Done, needs test) Retrieve arguments from DownloaderTaskFragment
         // Prepare them for use with DownloaderTask.
-        var argsDownloaderTaskFragment = this.requireArguments().get("friends") // Bundle
-//        Log.i("NotificationsLab", argsDownloaderTaskFragment.toString())
-        var feedsIntArr = arrayOf(argsDownloaderTaskFragment)
-        var feeds = feedsIntArr as Array<Int?>
+//        var argsDownloaderTaskFragment = this.requireArguments().get("friends") // Bundle
+        var argsDownloaderTaskFragment = this.arguments?.getIntegerArrayList("friends") // Bundle
+//        var feedsIntArr = arrayOf(argsDownloaderTaskFragment)
+//        var feeds = feedsIntArr as Array<Int?>
+
+        var feeds = arrayOfNulls<Int>(argsDownloaderTaskFragment!!.size)
+        feeds = argsDownloaderTaskFragment.toArray(feeds)
 
         mDownloaderTask!!.execute(*feeds)
 
@@ -142,8 +145,8 @@ class DownloaderTaskFragment : Fragment() {
                         override fun onReceive(context: Context, intent: Intent) {
 
                             // TODO: (Done, needs testing) Check whether or not the MainActivity
-                            // received the broadcast
-                            if (resultCode == RESULT_CANCELED) {
+                            // received the broadcast. First branch is did not receive broadcast
+                            if (resultCode != MainActivity.IS_ALIVE) { // != IS_ALIVE
 
                                 createNotificationChannel()
 
@@ -152,7 +155,7 @@ class DownloaderTaskFragment : Fragment() {
                                 // to FLAG_UPDATE_CURRENT
                                 val mContentIntent = PendingIntent.getActivity(context,
                                     0,
-                                    restartMainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
+                                    restartMainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                                 )
 
                                 // Uses R.layout.custom_notification for the

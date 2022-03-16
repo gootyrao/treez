@@ -46,13 +46,14 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener,
 
   // One time setup of UI and retained (headless) Fragment
     private fun setupFragments() {
-        Log.i(TAG, "Exiting setupFragments")
+        Log.i(TAG, "Entering setupFragments")
 
         installFriendsFragment()
 
         // The feed is fresh if it was downloaded less than 2 minutes ago
         mIsFresh = System.currentTimeMillis() - getFileStreamPath(
                 TWEET_FILENAME).lastModified() < TWO_MIN
+        Log.i(TAG, mIsFresh.toString())
         if (!mIsFresh) { // If feed needs updating
             installDownloaderTaskFragment()
 
@@ -270,4 +271,29 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener,
             arrayListOf(R.raw.ladygaga, R.raw.rebeccablack, R.raw.taylorswift)
         private const val TWO_MIN = 2 * 60 * 1000.toLong()
     }
+
+    /*
+        Behavior seen:
+            ran app w/ starting point as MainActivity
+
+
+            Test 1.1
+                - toast message displayed in app
+            ~6 seconds later, tweets were downloaded, ping sent in notification area
+            Expected: No Toast Message or Notification shown.
+            Why? tweets should be new, don't need to download and notify the download
+
+            Test 1.2
+                - No Toast message shown (expected)
+                after 2 mins, exited app, no response (not explicitly not expected)
+
+            Test 2.1
+                - Same behavior as 1.1 except it took ~2 seconds to download
+                notification sent from Notification Area, not Toast
+
+            Test 2.2
+                - Expected behavior, but same behavior as 2.1
+
+        Behavior expected:
+     */
 }
