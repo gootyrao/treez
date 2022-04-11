@@ -146,7 +146,10 @@ class DownloaderTaskFragment : Fragment() {
 
                             // TODO: (Done, needs testing) Check whether or not the MainActivity
                             // received the broadcast. First branch is did not receive broadcast
-                            if (resultCode != MainActivity.IS_ALIVE) { // != IS_ALIVE
+                            Log.i("Lab-Notifications", "resultCode: $resultCode, Intent value:")
+                            Log.i("Lab-Notifications", intent.getIntExtra("resultCode", 0).toString())
+//                            if (resultCode != MainActivity.IS_ALIVE) { // != IS_ALIVE
+                            if (intent.getIntExtra("resultCode", 0) != MainActivity.IS_ALIVE) { // != IS_ALIVE
 
                                 createNotificationChannel()
 

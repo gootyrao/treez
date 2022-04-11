@@ -69,8 +69,10 @@ class MainActivity : FragmentActivity(), FriendsFragment.SelectionListener,
                     // Let sender know that the Intent was received
                     // by setting result code to MainActivity.IS_ALIVE
                     if (isOrderedBroadcast) {
+                        Log.i(TAG, "Setting result to IS_ALIVE")
                         mResultCode = IS_ALIVE
-                        setResult(mResultCode)
+//                        setResult(mResultCode)
+                        intent!!.putExtra("resultCode", IS_ALIVE)
                     }
                 }
             }
