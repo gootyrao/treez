@@ -3,6 +3,7 @@ package course.labs.graphicslab
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -19,6 +20,7 @@ import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random.Default.nextInt
 
 class BubbleActivity : Activity() {
 
@@ -127,10 +129,11 @@ class BubbleActivity : Activity() {
         private var mRotate: Long = 0
         private var mDRotate: Long = 0
 
-        // TODO - Return true if the BubbleView is still on the screen after
+        // [DONE] TODO - Return true if the BubbleView is still on the screen after
         // the move operation
         private val isOutOfView: Boolean
-            get() = false
+            get() = !(-mScaledBitmapWidth <= mYPos && mYPos <= mDisplayHeight + mScaledBitmapWidth
+                    && -mScaledBitmapWidth <= mXPos && mXPos <= mDisplayHeight + mScaledBitmapWidth)
 
 
         init {
@@ -165,8 +168,8 @@ class BubbleActivity : Activity() {
 
             mDRotate = if (speedMode == RANDOM) {
 
-                // TODO - set rotation randomly in range [1..3]
-                -1
+                // [DONE] TODO - set rotation randomly in range [1..3]
+                (1..3).random().toLong()
 
             } else {
                 0
@@ -188,9 +191,15 @@ class BubbleActivity : Activity() {
                 }
                 else -> {
 
-                    // TODO - Set movement direction and speed
+                    // [DONE] TODO - Set movement direction and speed
                     // Limit movement speed in the x and y
                     // direction to [-3..3] pixels per movement.
+                    mDx = (-3..3).random().toFloat()
+                    mDy = (-3..3).random().toFloat()
+                    Log.i(TAG, "Bubble x speed:")
+                    Log.i(TAG, mDx.toString())
+                    Log.i(TAG, "Bubble y speed:")
+                    Log.i(TAG, mDy.toString())
 
 
                 }
@@ -203,13 +212,16 @@ class BubbleActivity : Activity() {
                 BITMAP_SIZE * 3
             } else {
 
-                // TODO - set scaled bitmap size in range [1..3] * BITMAP_SIZE
-                -1
+                // [DONE] TODO - set scaled bitmap size in range [1..3] * BITMAP_SIZE
+                (1..3).random() * BITMAP_SIZE
 
             }
 
-            // TODO - create the scaled bitmap using size set above
-
+            // [DONE] TODO - create the scaled bitmap using size set above
+//            mScaledBitmap = createBitmap(mBitmap, mXPos.toInt(), mYPos.toInt(),
+//                mScaledBitmapWidth, mScaledBitmapWidth)
+            mScaledBitmap = Bitmap.createScaledBitmap(mBitmap, mScaledBitmapWidth,
+                mScaledBitmapWidth, false) // [2nd option for bitmap constructor]
         }
 
         // Start moving the BubbleView & updating the display
@@ -223,12 +235,18 @@ class BubbleActivity : Activity() {
             // milliseconds. Save reference to this job in mMoverFuture
 
             mMoverFuture = executor.scheduleWithFixedDelay({
-                // TODO - implement movement logic.
+                // [DONE] TODO - implement movement logic.
                 // Each time this method is run the BubbleView should
                 // move one step. If the BubbleView exits the display,
                 // stop the BubbleView's Worker Thread.
                 // Otherwise, ensure that the BubbleView will be redrawn.
+                Log.i(TAG, "Just refreshed, about to draw")
+                if (!this.moveWhileOnScreen()) {
+                    // stop worker thread for BubbleView
+                    stop(false)
+                }
 
+                this.postInvalidate()
 
             }, 0, REFRESH_RATE.toLong(), TimeUnit.MILLISECONDS)
         }
@@ -246,8 +264,8 @@ class BubbleActivity : Activity() {
 
                 // This work will be performed on the UI Thread
                 mFrame.post {
-                    // TODO - Remove the BubbleView from mFrame
-
+                    // [DONE] TODO - Remove the BubbleView from mFrame
+                    mFrame.removeView(this)
 
                     // If the bubble was popped by user,
                     // play the popping sound
@@ -267,17 +285,23 @@ class BubbleActivity : Activity() {
         @Synchronized
         override fun onDraw(canvas: Canvas) {
 
-            // TODO - save the canvas
+            // [DONE] TODO - save the canvas
+            canvas.save()
 
-            // TODO - increase the rotation of the original image by mDRotate
+            // [DONE] TODO - increase the rotation of the original image by mDRotate
+            // is this changing the 'original image'?
+            mRotate += mDRotate
 
-            // TODO Rotate the canvas by current rotation
+            // [DONE] TODO Rotate the canvas by current rotation
             // Hint - Rotate around the bubble's center, not its position
+            canvas.rotate(mRotate.toFloat(), mXPos + mRadius, mYPos + mRadius)
 
+            // [DONE] TODO - draw the bitmap at it's new location
+            // Do I use the canvas to draw this?
+            canvas.drawBitmap(mScaledBitmap!!, mXPos, mYPos, mPainter)
 
-            // TODO - draw the bitmap at it's new location
-
-            // TODO - restore the canvas
+            // [DONE] TODO - restore the canvas
+            canvas.restore()
 
         }
 
@@ -286,10 +310,19 @@ class BubbleActivity : Activity() {
         @Synchronized
         private fun moveWhileOnScreen(): Boolean {
 
-            // TODO - Move the BubbleView
+            // [DONE] TODO - Move the BubbleView
+            mXPos += mDx
+            mYPos += mDy
 
+            Log.i(TAG, "New x pos after move op:")
+            Log.i(TAG, mXPos.toString())
+            Log.i(TAG, "New y pos after move op:")
+            Log.i(TAG, mYPos.toString())
 
-            return isOutOfView
+            Log.i(TAG, "isOutOfView:")
+            Log.i(TAG, isOutOfView.toString())
+
+            return !isOutOfView
 
         }
 
@@ -308,7 +341,7 @@ class BubbleActivity : Activity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // TODO- Handle addition and deletion of bubbles from options menu (in below branches)
+        // [DONE] TODO - Handle addition and deletion of bubbles *from options menu* (bubble handles deletion off of edge)
         // Added bubbles should be given random locations.
         // The bubble to delete is the most recently added bubble
         // that is still in the frame.
@@ -317,12 +350,27 @@ class BubbleActivity : Activity() {
         // ViewGroup.getChildCount() method
         when (item.itemId) {
             R.id.menu_add_bubble -> {
-                // TODO (above continued) - handle addition of bubbles here
+                // [DONE] TODO (above continued) - handle addition of bubbles here
+
+                var randX = (0..mDisplayWidth).random().toFloat()
+                var randY = (0..mDisplayHeight).random().toFloat()
+
+                var newBubble = BubbleView(applicationContext, randX, randY)
+                mFrame.addView(newBubble)
+                newBubble.start() // added while debugging, not confident
 
                 return true
             }
             R.id.menu_delete_bubble -> {
-                // TODO (above continued) - handle deletion of bubbles here
+                // [DONE] TODO (above continued) - handle deletion of bubbles here
+
+                if (mFrame.childCount > 0) {
+                    val mostRecentBub = mFrame.getChildAt(mFrame.childCount - 1) as BubbleView
+                    Log.i(TAG, "Bubble to delete:")
+                    Log.i(TAG, mostRecentBub.toString())
+
+                    mostRecentBub.stop(true)
+                }
 
                 return true
             }
