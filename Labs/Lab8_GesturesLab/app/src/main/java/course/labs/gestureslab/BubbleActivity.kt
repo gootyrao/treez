@@ -25,6 +25,8 @@ import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
+import kotlin.math.sqrt
 
 
 class BubbleActivity : Activity(), OnGesturePerformedListener {
@@ -68,21 +70,23 @@ class BubbleActivity : Activity(), OnGesturePerformedListener {
         // Load basic bubble Bitmap
         mBitmap = BitmapFactory.decodeResource(resources, R.drawable.b64)
 
-        // TODO - Fetch GestureLibrary from raw
-
+        // [DONE] TODO - Fetch GestureLibrary from raw
+        mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures)
 
         val gestureOverlay = findViewById<View>(R.id.gestures_overlay) as GestureOverlayView
 
-        // TODO - Make this the target of gesture detection callbacks
+        // [DONE] TODO - Make this the target of gesture detection callbacks
+        gestureOverlay.addOnGesturePerformedListener(this)
 
-        // TODO - implement OnTouchListener to pass all events received by the
+        // [DONE] TODO - implement OnTouchListener to pass all events received by the
         // gestureOverlay to the basic gesture detector
 
+//        setupGestureDetector()
         gestureOverlay.setOnTouchListener { v, event ->
-            true || false
+            mGestureDetector!!.onTouchEvent(event)
         }
 
-        // Uncomment to remove gesture highlights
+        // TODO - Uncomment to remove gesture highlights
         // gestureOverlay.setUncertainGestureColor(Color.TRANSPARENT);
 
         mLibrary?.apply {
@@ -146,10 +150,24 @@ class BubbleActivity : Activity(), OnGesturePerformedListener {
                     event2: MotionEvent, velocityX: Float, velocityY: Float
                 ): Boolean {
 
-                    // TODO - Implement onFling actions.
+                    // [TESTING] TODO - Implement onFling actions.
                     // You can get all Views in mFrame one at a time
                     // using the ViewGroup.getChildAt() method
+                    val num_bubbles = mFrame!!.childCount;
+                    var i = 0;
+                    while (i + 1 < num_bubbles) {
 
+                        var bubble_at_i = mFrame!!.getChildAt(i) as BubbleView;
+
+                        if (bubble_at_i.intersects(event1.x, event1.y)) {
+                            bubble_at_i.deflect(velocityX, velocityY)
+
+                            // break the loop if bubble was found
+                            break
+                        }
+
+                        i += 1
+                    }
 
                     return true
                 }
@@ -163,10 +181,33 @@ class BubbleActivity : Activity(), OnGesturePerformedListener {
 
                 override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
 
-                    // TODO - Implement onSingleTapConfirmed actions.
+                    // [DONE] TODO - Implement onSingleTapConfirmed actions.
                     // You can get all Views in mFrame using the
                     // ViewGroup.getChildCount() method
 
+                    val num_bubbles = mFrame!!.childCount;
+                    var i = 0;
+                    var bubbleDeleted = false
+
+                    while (i + 1 < num_bubbles) {
+
+                        var bubble_at_i = mFrame!!.getChildAt(i) as BubbleView;
+
+                        if (bubble_at_i.intersects(event.x, event.y)) {
+                            bubble_at_i.stop(true)
+
+                            bubbleDeleted = true
+                        }
+
+                        i += 1
+                    }
+
+                    // If a bubble wasn't clicked, create a new bubble
+                    if (!bubbleDeleted) {
+                        var newBubble = BubbleView(applicationContext, event.x, event.y)
+                        mFrame!!.addView(newBubble)
+                        newBubble.start()
+                    }
 
                     return true
                 }
@@ -192,16 +233,16 @@ class BubbleActivity : Activity(), OnGesturePerformedListener {
 
     override fun onGesturePerformed(overlay: GestureOverlayView, gesture: Gesture) {
 
-        // TODO - Get gesture predictions
-        val predictions: ArrayList<Prediction>? = null
+        // [DONE] TODO - Get gesture predictions
+        val predictions: ArrayList<Prediction>? = mLibrary?.recognize(gesture)
 
         if (predictions!!.size > 0) {
 
             // Get highest-ranked prediction
             val prediction = predictions[0]
-            // Log.i(TAG, "pred:" + prediction.name + " score:" + prediction.score)
+             Log.i(TAG, "pred:" + prediction.name + " score:" + prediction.score)
 
-            // TODO - Ignore predictions with a score of < MIN_PRED_SCORE and display a
+            // [DONE] TODO - Ignore predictions with a score of < MIN_PRED_SCORE and display a
             // toast message
             // informing the user that no prediction was made. If the prediction
             // matches
@@ -209,12 +250,47 @@ class BubbleActivity : Activity(), OnGesturePerformedListener {
             // the addTen
             // gesture, add 10 bubbles to the screen.
 
+            if (prediction.score >= MIN_PRED_SCORE) {
+                Toast.makeText(
+                    applicationContext,
+                    prediction.name,
+                    Toast.LENGTH_LONG
+                ).show()
 
+                when (prediction.name) {
+                    "addTen" -> {
+                        var i = 0
+                        while (i < 10) {
+
+                            var newBubble = BubbleView(applicationContext,
+                                (0..mDisplayWidth).random().toFloat(),
+                                (0..mDisplayHeight).random().toFloat()
+                            )
+                            mFrame!!.addView(newBubble)
+                            newBubble.start()
+
+                            i += 1
+                        }
+                    }
+                    "openMenu" -> {
+                        openOptionsMenu()
+                    }
+                }
+            } else {
+                Toast.makeText(
+                    applicationContext,
+                    "Could not recognize action",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
 
 
         } else {
-
-
+            Toast.makeText(
+                applicationContext,
+                "No prediction made",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
