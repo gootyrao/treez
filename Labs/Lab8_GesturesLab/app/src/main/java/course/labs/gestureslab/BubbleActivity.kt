@@ -149,15 +149,18 @@ class BubbleActivity : Activity(), OnGesturePerformedListener {
                     event1: MotionEvent,
                     event2: MotionEvent, velocityX: Float, velocityY: Float
                 ): Boolean {
+                    Log.i(TAG, "Entered onFling")
 
                     // [TESTING] TODO - Implement onFling actions.
                     // You can get all Views in mFrame one at a time
                     // using the ViewGroup.getChildAt() method
                     val num_bubbles = mFrame!!.childCount;
+//                    Log.i(TAG, num_bubbles.toString())
                     var i = 0;
-                    while (i + 1 < num_bubbles) {
+                    while (i < num_bubbles && num_bubbles != 0) {
 
                         var bubble_at_i = mFrame!!.getChildAt(i) as BubbleView;
+                        Log.i(TAG, bubble_at_i.toString())
 
                         if (bubble_at_i.intersects(event1.x, event1.y)) {
                             bubble_at_i.deflect(velocityX, velocityY)
@@ -189,7 +192,7 @@ class BubbleActivity : Activity(), OnGesturePerformedListener {
                     var i = 0;
                     var bubbleDeleted = false
 
-                    while (i + 1 < num_bubbles) {
+                    while (i < num_bubbles && i != 0) {
 
                         var bubble_at_i = mFrame!!.getChildAt(i) as BubbleView;
 
