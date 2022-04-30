@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:text="TreeSpotter"
+        android:textAppearance="@android:style/TextAppearance.Material.Display2"
+        android:textColor="#00DDC9" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="262dp"
+        android:src="@mipmap/home_screen_image" />
+
+    <Button
+        android:id="@+id/addTreeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#00DDC9"
+        android:text="Add Tree" />
+
+    <Button
+        android:id="@+id/localTreesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#00DDC9"
+        android:text="View Nearby Trees" />
+</LinearLayout>
